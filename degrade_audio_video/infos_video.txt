@@ -1,0 +1,34 @@
+(4/3) [rapport 1.33]
+
+640x480
+800x600
+960x720
+1024x768
+1152x864
+1280x960
+1400x1050
+1440x1080
+1600x1200
+1856x1392
+1920x1440
+2048x1536
+
+
+ffmpeg -i $filename  -b:v 1500k -b:a 128k -vcodec libx264 -acodec aac -s 320x240
+
+
+
+
+(16/9) [rapport 1.77]
+
+3840x2160
+2560x1440
+1920x1080
+1600x900
+1280x768
+1024x576
+
+ffmpeg -i $filename  -b:v 1500k -b:a 128k -vcodec libx264 -acodec aac -s 320x180
+
+
+
