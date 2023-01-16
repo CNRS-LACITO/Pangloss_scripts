@@ -1,3 +1,5 @@
+Pour lancer le script : sh degrade_audio-video.sh
+
 Pour utiliser ce script il faut d'abord télécharger ffmpeg (https://ffmpeg.org/download.html)
 
 Ce script permet de :
@@ -10,6 +12,7 @@ Les résultats sont mis dans un répertoire nommé "output"
 
 ********
 
+To run the script : sh degrade_audio-video.sh
 
 To use this script you need to download ffmpeg (https://ffmpeg.org/download.html)
 
