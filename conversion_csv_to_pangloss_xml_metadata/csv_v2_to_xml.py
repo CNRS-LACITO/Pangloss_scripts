@@ -198,7 +198,7 @@ def excel_to_xml_metadata(file):
                         languages_temp_split = ''
                         # Traitement des différentes langues entendues dans l'enregistrement
                         languages_temp = re.sub('\"','', languages_temp)
-                        languages_temp = re.sub(' ','', languages_temp)
+                        # languages_temp = re.sub(' ','', languages_temp)
                         
                         if ";" in languages_temp:
                             languages_temp_split = languages_temp.split(";")
