@@ -1,3 +1,4 @@
+
 mkdir degrades
 
 for filename in *.wav 
