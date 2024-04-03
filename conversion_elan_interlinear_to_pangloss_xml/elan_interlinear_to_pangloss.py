@@ -51,11 +51,11 @@ def elan_to_pangloss(repertoire):
             nom_fichier=element[:-4]
             print ('fichier : ',nom_fichier)
             
-            if not os.path.exists('resultats'):
-                os.makedirs('resultats')
+            if not os.path.exists('out'):
+                os.makedirs('out')
             
             # on ouvre le fichier et on écrit au moin l'en tête xml pour un texte 
-            with open('resultats/'+nom_fichier+".xml", "w" ,encoding='utf8') as file_out:
+            with open('out/'+nom_fichier+".xml", "w" ,encoding='utf8') as file_out:
                 
                         
                     num = 1

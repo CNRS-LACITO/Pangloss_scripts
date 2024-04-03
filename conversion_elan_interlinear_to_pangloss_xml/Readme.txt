@@ -4,7 +4,7 @@ Il doit être adapté en fonction des tiers utilisés dans elan (modifications �
 
 Pour lancer le script : 
 ```
-python elan_interlinear_to_pangloss.py rep_input/ rep_output/
+python elan_interlinear_to_pangloss.py rep_input/
 ```
 
 Input :
@@ -13,7 +13,7 @@ Ce fichier contient les différentes tiers (exportés en block) ainsi que la tie
 
 
 Output :
-- `rep_output` : Le répertoire contenant le ou les fichiers créés.
+- Crée un répertoire "out" contenant le ou les fichiers créés.
 Ces fichiers xml créés sont enregistrés chacun avec le même nom du fichier d'entrée elan 
 
 ********
@@ -29,11 +29,11 @@ This file contains the various tiers (exported as a block) and the timecode tier
 
 
 Output :
-- `rep_output`: The directory containing the file or files created.
+- create a directory named "out" containing the file or files created.
 The xml files created are each saved with the name of the input elan file
 
 Command:
 
 ```
-python elan_interlinear_to_pangloss.py rep_input/ rep_output/
+python elan_interlinear_to_pangloss.py rep_input/
 ```
