@@ -155,7 +155,7 @@ def elan_to_pangloss(repertoire):
                                                   
                                             if mot_morphs != "" and liste_gloses != "":
                                                 for i in range(0,len(mot_morphs)):
-                                                    print ('emp : ', emp)
+                                                    # print ('emp : ', emp)
                                                     morphem=re.sub('<','&lt;',mot_morphs[i])
                                                     glose = re.sub('<','&lt;',liste_gloses[emp])
                                                     
@@ -222,19 +222,23 @@ def elan_to_pangloss(repertoire):
                                     # id_phrase = content
                                     
                                     
-                                # Récupération de la transcription de la phrase
-                                if champ == "tx":
+                                # Récupération de la transcription phonologique de la phrase et gestion des locuteurs s'il y en a plusieurs
+                                if champ == "tx" or champ == "tx@SP1" or champ == "tx@SP2":
                                     transcription_phono=content  
                                     transcription_phono=re.sub('\t+',' ',transcription_phono)
                                     transcription_phono=re.sub('\s+',' ',transcription_phono)
                                     
-                                # Récupération de la transcription de la phrase
+                                    if '@' in champ:
+                                        who = champ.split("@")[1]
+                                        
+                                    
+                                # Récupération de la transcription phonetique de la phrase
                                 if champ == "tx_phntc":
                                     transcription_phone=content  
                                     transcription_phone=re.sub('\t+',' ',transcription_phone)
                                     transcription_phone=re.sub('\s+',' ',transcription_phone)
                                     
-                                 
+                                # Récupération de la traduction en anglais 
                                 if champ == "ft_en" or champ == "ft_eng":
                                     # print ('traduction en')
                                     translation_en=content
@@ -242,7 +246,8 @@ def elan_to_pangloss(repertoire):
                                     translation_en=re.sub('\s+',' ',translation_en)
                                     translation_en=re.sub('<','&lt;',translation_en)
                                     translation_en=re.sub('>','&gt;',translation_en)
-                                  
+                                
+                                # Récupération de la traduction en français  
                                 if champ == "ft":
                                     # print ('traduction fr')
                                     translation_fr=content
@@ -251,6 +256,7 @@ def elan_to_pangloss(repertoire):
                                     translation_fr=re.sub('<','&lt;',translation_fr)
                                     translation_fr=re.sub('>','&gt;',translation_fr)
                                     
+                                # Récupération de la traduction dans une autre langue
                                 if champ == "Phrase Free Translation":
                                     # print ('traduction autre')
                                     translation_autre=content
@@ -258,12 +264,8 @@ def elan_to_pangloss(repertoire):
                                     translation_autre=re.sub('\s+',' ',translation_autre)
                                     translation_autre=re.sub('<','&lt;',translation_autre)
                                     translation_autre=re.sub('>','&gt;',translation_autre)
-
-                                    
-                                
-                                
-                                    
-                                # Récupération des mots au niveau des morphèmes (avec - indiqué pour pouvoir recréer le mot)
+  
+                                # Récupération des morphèmes
                                 if champ == "mb":  
                                     morphems=content
                                     
@@ -272,8 +274,6 @@ def elan_to_pangloss(repertoire):
                                     morphems=re.sub('\t-','-',morphems)
                                     morphems=re.sub('-\t','-',morphems)
                                     morphems=re.sub('--','-',morphems)
-                                   
-                                   
                                   
                                     # morphems=re.sub('-','',morphems)
                                     morphems=re.sub(',','',morphems)
@@ -286,38 +286,20 @@ def elan_to_pangloss(repertoire):
                                     gloses=content
                                     morphems=content
                                    
-                                    
                                     # gloses=re.sub('-','',gloses)
                                     gloses=re.sub(',','',gloses)
                                        
                                     liste_gloses = gloses.split('\t')
-
                                
-                                # Récupération des mots (avec indication de morphème par un -) s au niveau des mots
+                                # Récupération des mots avec indication de morphème (par un -)
                                 if champ == "mot": 
                                      
-                                
                                     morphems=content
                                     morphems=re.sub('--','-',morphems)
                                     morphems=re.sub(',','',morphems)
                                     
                                     liste_mots = morphems.split('\t')
-                                
-                                         
-                                # Récupération des gloses au niveau des morphèmes
-                                if champ == "ge-fr@SP":
-                                    gloses_supp=content
-                                    gloses_supp=re.sub('=','=-',gloses_supp)
-                                    # gloses_supp=re.sub('-','\t',gloses_supp)
                                      
-                                    gloses_supp=re.sub('-','',gloses_supp)
-                                    gloses_supp=re.sub(',','',gloses_supp)
-                                      
-                                    liste_gloses_supp = gloses_supp.split('\t')
-                                        
-                                    
-                
-                                        
                                     
                                 # Récupération des timecode
                                 # TC	0.601 - 4.218
