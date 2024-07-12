@@ -78,9 +78,12 @@ def excel_to_xml_metadata(file):
                 balise_created = ''
                 balises_contributors = ''
                 balises_contributors_xml = ''
+                balise_format_sound = ''
+                balise_type_sound= ''
+                balise_deg_mp3 = ''
                 balise_extent = ''
                 balise_description = ''
-                balise_publisher = ''
+                balise_publishers = ''
                 balise_access_rights = ''
                 balise_licence = ''
                 balise_copyright = ''
@@ -91,6 +94,7 @@ def excel_to_xml_metadata(file):
                 balise_linguistic_type = ''
                 balise_discourse_type = ''
                 balise_source = ''
+                balise_master = ''
                
                 # Initialisation de variables autres
                 required_by_temp = ''
@@ -103,12 +107,12 @@ def excel_to_xml_metadata(file):
                  
                 # Chaque champ du fichier excel est récupéré et mis dans un tableau nommé champs
                 champs = line.split("\t")
-
+                
                 
                 # print (len(champs))
                 # Vérification qu'il existe bien les 26 champs requis (vides ou non) (le premier champ est 0 et le dernier 25 donc on a 26 champs)
                 if len(champs) >= 25:
-                    
+                    # print ('oui')
                     # Récupération du contenu du tableau dans des variables afin d'effectuer des traitements individuels
                     file_name_temp = champs[2]
                     title_temp = champs[3]
@@ -170,9 +174,10 @@ def excel_to_xml_metadata(file):
                             alternative = result_regex.group(1)
                             alternative_langue = result_regex.group(2)
                             balise_alternative = "<dcterms:alternative xml:lang=\""+alternative_langue.strip()+"\">"+alternative.strip()+"</dcterms:alternative>\n"
-                        else:
+                        elif alternative!="" :
                             balise_alternative = "<dcterms:alternative>"+alternative+"</dcterms:alternative>\n"
-                        
+                        else:
+                            balise_alternative=""
                         subject_temp_split = ''
                         # Traitement de la langue d'étude
                         if ";" in subject_temp:
@@ -311,7 +316,6 @@ def excel_to_xml_metadata(file):
                                 
                                 
                                 
-                                
                             
                         
                         # Traitement de la durée du fichier multimedia
@@ -346,11 +350,15 @@ def excel_to_xml_metadata(file):
                                 description = re.sub('\"','',description)
                                 balise_description = "<dc:description>"+description.strip()+"</dc:description>\n"                    
 
-                        
+                       
                         # Traitement du champ publisher
                         if publisher_temp != '':
-                            publisher = publisher_temp
-                            balise_publisher = "<dc:publisher>"+publisher.strip()+"</dc:publisher>\n"
+                            publisher = re.sub('\"','', publisher_temp)
+                            publisher_split = publisher_temp.split(";")
+                            for name in publisher_split:
+                                balise_publishers += "<dc:publisher>"+name.strip()+"</dc:publisher>\n"
+                   
+                    
                         
                         # Traitement du champ access right
                         if access_rights_temp != '':
@@ -468,7 +476,9 @@ def excel_to_xml_metadata(file):
                             
                         # Ecriture de toutes les balises décrivant cette ressource dans le fichier xml de métadonnées   
                         file_out.write("<crdo:item crdo:datestamp=\""+date_today+"\" crdo:id=\""+file_name+"_SOUND\">\n")    
-                        file_out.write(balise_title)    
+                        file_out.write(balise_title) 
+                        if balise_alternative!="": 
+                            file_out.write(balise_alternative)
                         file_out.write(balise_subject)
                         file_out.write(balises_languages)
                         file_out.write(balise_spatial_free)
@@ -481,7 +491,7 @@ def excel_to_xml_metadata(file):
                         file_out.write(balise_extent)
                         file_out.write(balise_deg_mp3)
                         file_out.write(balise_master)
-                        file_out.write(balise_publisher)
+                        file_out.write(balise_publishers)
                         file_out.write(balise_description)
                         file_out.write(balise_access_rights)
                         file_out.write(balise_copyright)
@@ -519,32 +529,61 @@ def excel_to_xml_metadata(file):
                                 if requires_extension == "wav":
                                     requires_file = requires_file+"_SOUND"
                                
-                             
+                                print ("AAAA : ", one_required_by)
                                 if len(one_required_by) == 2:
                                     linked_filename = required_by_file
                                     extension = required_by_extension
                                     
+                                    print ('EXTENSION : ', extension)
                                     # Si le fichier lié au fichier actuel est au format xml création des métadonnées décrivant les annotations
-                                    if extension == 'xml':
-                                        balise_format_xml = "<dc:format xsi:type=\"dcterms:IMT\">text/xml</dc:format>\n"
-                                        balise_type_text = "<dc:type xsi:type=\"dcterms:DCMIType\">Text</dc:type>\n"
-                                        balise_identifier = "<dc:identifier xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/masters/"+file+"</dc:identifier>\n"
+                                    if extension == 'xml' or extension == 'pdf' or extension == 'eaf' or extension == 'flextext':
                                         
-                                        balise_dtd = "<dcterms:conformsTo xsi:type=\"dcterms:URI\">oai:crdo.vjf.cnrs.fr:cocoon-49aefa90-8c1f-3ba8-a099-0ebefc6a2aa7</dcterms:conformsTo>\n"
+                                        balise_dtd = ''
                                         
+                                        if extension == 'xml':
+                                            balise_format_xml = "<dc:format xsi:type=\"dcterms:IMT\">text/xml</dc:format>\n"
+                                            balise_type_text = "<dc:type xsi:type=\"dcterms:DCMIType\">Text</dc:type>\n"
+                                            balise_identifier = "<dc:identifier xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/masters/"+linked_filename+".xml</dc:identifier>\n"
+                                        
+                                            balise_dtd = "<dcterms:conformsTo xsi:type=\"dcterms:URI\">oai:crdo.vjf.cnrs.fr:cocoon-49aefa90-8c1f-3ba8-a099-0ebefc6a2aa7</dcterms:conformsTo>\n"
+                                            
+                                        elif extension == 'eaf':
+                                            balise_format_xml = "<dc:format xsi:type=\"dcterms:IMT\">text/xml</dc:format>\n"
+                                            balise_type_text = "<dc:type xsi:type=\"dcterms:DCMIType\">Text</dc:type>\n"
+                                            balise_identifier = "<dc:identifier xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/"+linked_filename+".xml</dc:identifier>\n"
+                                            balise_master = "<dcterms:isFormatOf xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/masters/"+linked_filename+".eaf</dcterms:isFormatOf>\n"
+                                            
+                                            balise_dtd = "<dcterms:conformsTo xsi:type=\"dcterms:URI\">oai:crdo.vjf.cnrs.fr:cocoon-49aefa90-8c1f-3ba8-a099-0ebefc6a2aa7</dcterms:conformsTo>\n"
+                                        
+                                        elif extension == 'flextext':
+                                            print ('OUIOUIOUIOUI')
+                                            balise_format_xml = "<dc:format xsi:type=\"dcterms:IMT\">text/xml</dc:format>\n"
+                                            balise_type_text = "<dc:type xsi:type=\"dcterms:DCMIType\">Text</dc:type>\n"
+                                            balise_identifier = "<dc:identifier xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/"+linked_filename+".xml</dc:identifier>\n"
+                                            balise_master = "<dcterms:isFormatOf xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/masters/"+linked_filename+".flextext</dcterms:isFormatOf>\n"
+                                            
+                                            balise_dtd = "<dcterms:conformsTo xsi:type=\"dcterms:URI\">oai:crdo.vjf.cnrs.fr:cocoon-49aefa90-8c1f-3ba8-a099-0ebefc6a2aa7</dcterms:conformsTo>\n"
+                                            
+                                        elif extension == 'pdf':
+                                            balise_format_xml = "<dc:format xsi:type=\"dcterms:IMT\">application/pdf</dc:format>\n"
+                                            balise_type_text = "<dc:type xsi:type=\"dcterms:DCMIType\">Text</dc:type>\n"
+                                            balise_identifier = "<dc:identifier xsi:type=\"dcterms:URI\">http://cocoon.huma-num.fr/data/"+REP_CHERCHEUR+"/masters/"+linked_filename+".pdf</dc:identifier>\n"
                                         
                                         # Ecriture dans le fichier de métadonnées du fichier lié au fichier actuel
                                         file_out.write("<crdo:item crdo:datestamp=\""+date_today+"\" crdo:id=\""+linked_filename+"\">\n")
-                                        file_out.write(balise_title)    
+                                        file_out.write(balise_title)   
+                                        file_out.write(balise_alternative) 
                                         file_out.write(balise_subject)
                                         file_out.write(balises_languages)
                                         file_out.write(balise_created)     
                                         file_out.write(balises_contributors_xml)
                                         file_out.write(balise_format_xml)
+                                        file_out.write(balise_master)
                                         file_out.write(balise_type_text)
                                         file_out.write(balise_identifier)
-                                        file_out.write(balise_dtd)
-                                        file_out.write(balise_publisher)
+                                        if balise_dtd != '':
+                                            file_out.write(balise_dtd)
+                                        file_out.write(balise_publishers)
                                         file_out.write(balise_description)
                                         file_out.write(balise_linguistic_type)
                                         file_out.write(balise_discourse_type)
